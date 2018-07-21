@@ -1,0 +1,30 @@
+{
+  "name": "accessibility-app",
+  "version": "1.0.0",
+  "description": "Slackathon Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "runtests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Accesibility/Accessbility-App.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Accesibility/Accessbility-App/issues"
+  },
+  "homepage": "https://github.com/Accesibility/Accessbility-App#readme",
+  "dependencies": {
+    "@aoberoi/passport-slack": "^1.0.5",
+    "@slack/client": "^4.3.1",
+    "@slack/events-api": "^1.0.1",
+    "body-parser": "^1.18.3",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "google-tts-api": "0.0.2",
+    "passport": "^0.4.0",
+    "play-sound": "^1.1.2"
+  }
+}
