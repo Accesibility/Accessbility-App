@@ -68,9 +68,38 @@ app.get('/', (req, res) => {
 });
 
 
-
 // *** Plug the event adapter into the express app as middleware ***
 app.use('/slack/events', slackEvents.expressMiddleware());
+
+function pyScripts(input) {
+  // Take data from Python script (speech to text)
+  // var myPythonScriptPath = 'py_scripts/Speech_to_Text.py';
+  var myPythonScriptPath = 'tts.py';
+  // console.log("input in the node file" + input);
+  // Use python shell
+  var PythonShell = require('python-shell');
+
+  var options = {
+    mode: 'text',
+    scriptPath: '/Users/lahari/slackathon/Accessbility-App/',
+    args:[input,'value1']
+  };
+  var pyshell = new PythonShell('tts.py',options);
+
+  pyshell.on('messages', function (message) {
+    // received a message sent from the Python script (a simple "print" statement)
+    //post this into slack
+    console.log(message);
+  });
+  // end the input stream and allow the process to exit
+  pyshell.end(function (err) {
+    if (err){
+        throw err;
+    };
+
+    console.log('finished');
+  });
+}
 
 // *** Attach listeners to the event adapter ***
 
@@ -93,18 +122,19 @@ slackEvents.on('message', (message, body) => {
       .then((res) =>{
         console.log(res);
       }).catch(console.error);
+
   }
 });
 
 slackEvents.on('message', (message, body) => {
-
+  // console.log('Hello');
   // enter if message to check user. Should not send msg if user::mir
   if(!web) {
     return console.error('We could not handle your message.');
   }
 
   // play audio here
-
+  pyScripts(message.text);
 });
 
 // end of play event func
@@ -123,27 +153,6 @@ ${JSON.stringify(error.body)}`);
 // Start the express application
 const port = process.env.PORT || 3000;
 http.createServer(app).listen(port, () => {
-
-    // Take data from Python script (speech to text)
-    var myPythonScriptPath = 'py_scripts/Speech_to_Text.py';
-
-    // Use python shell
-    var PythonShell = require('python-shell');
-    var pyshell = new PythonShell(myPythonScriptPath);
-
-    pyshell.on('message', function (message) {
-      // received a message sent from the Python script (a simple "print" statement)
-      console.log(message);
-    });
-
-    // end the input stream and allow the process to exit
-    pyshell.end(function (err) {
-      if (err){
-          throw err;
-      };
-
-      console.log('finished');
-    });
 
   console.log(`server listening on port ${port}`);
 });

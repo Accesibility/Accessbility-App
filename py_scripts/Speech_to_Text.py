@@ -11,7 +11,7 @@ from pygame import mixer # Load the required library
 
 # Install
 # sudo pip uninstall pyaudio
-# conda install -c akode pyaudio
+# conda install -c akode pyaudio 
 # pip install SpeechRecognition
 # pip install urllib3
 # pip install pygame
@@ -23,8 +23,8 @@ from pygame import mixer # Load the required library
 
 # In[32]:
 
-accepted = 'py_scripts/kim.mp3'
-rejected = 'py_scripts/error.mp3'
+accepted = 'kim.mp3'
+rejected = 'error.mp3'
 
 def play_tone(tone):
     mixer.init()
@@ -37,7 +37,7 @@ def play_tone(tone):
 def levenshtein(s1, s2):
     s1 = s1.lower()
     s2 = s2.lower()
-
+    
     if len(s1) < len(s2):
         return levenshtein(s2, s1)
 
@@ -54,7 +54,7 @@ def levenshtein(s1, s2):
             substitutions = previous_row[j] + (c1 != c2)
             current_row.append(min(insertions, deletions, substitutions))
         previous_row = current_row
-
+    
     return previous_row[-1]
 
 
@@ -64,46 +64,46 @@ trigger_word = 'hey handy'
 command_words = ['send','repeat','read']
 
 
-# In[51]:
+# In[58]:
 
 def record_audio(state):
     r = sr.Recognizer()
     m = sr.Microphone()
-
+    
     try:
-        print("A moment of silence, please...")
+        log("A moment of silence, please...")
 #         with m as source: r.adjust_for_ambient_noise(source)
-        print("Set minimum energy threshold to {}".format(r.energy_threshold))
+        log("Set minimum energy threshold to {}".format(r.energy_threshold))
         while True:
-            print("Say something!")
-            with m as source: audio = r.listen(source,timeout=15)
-            print("Got it! Now to recognize it...")
+            log("Say something!")
+            with m as source: audio = r.listen(source,timeout=115)
+            log("Got it! Now to recognize it...")
             try:
-
-
+                
+                
                 # recognize speech using Google Speech Recognition
                 value = r.recognize_google(audio).lower()
-
+                
                 # Look for trigger word
-                if(state==1):
+                if(state==1): 
                     bol, command =  state1(value)
                     if(bol):
                         play_tone(accepted)
                         return bol, command
-                # Look for audio command
-                elif(state==2):
+                # Look for audio command 
+                elif(state==2): 
                     bol, command, text = state2(value)
-                    if(bol):
+                    if(bol): 
                         return  command, text
-
+                    
                 # Execute command
 
             except sr.UnknownValueError:
                 play_tone(rejected)
                 log("Oops! Didn't catch that")
             except sr.RequestError as e:
-
-
+                
+                
                 log("Uh oh! Couldn't request results from Google Speech Recognition service; {0}".format(e))
     except KeyboardInterrupt:
         pass
@@ -112,8 +112,8 @@ def record_audio(state):
 # In[52]:
 
 def state1(value):
-    print('State 1 '+value)
-
+    log('State 1 '+value)
+    
     text = (value).encode("utf-8")
     log("Hadi ----------->"+text)
     log(levenshtein(trigger_word,text))
@@ -124,61 +124,56 @@ def state1(value):
     return False,''
 def state2(value):
     word = ''
-    print('State 2 '+value)
+    log('State 2 '+value)
     for w in command_words:
         log('Looking for '+w)
         if(w in value):
             log('Command found '+w)
             return True,w,value
     return False,'',''
-
+    
 def state3(command,value):
-    print('State 3 '+value)
-
+    log('State 3 '+value)
+    
     text = value.replace(command,"",1)
     if(command == 'send'): send(text)
     elif(command == 'read'): read(text)
     elif(command == 'repeat'): repeat(text)
-
+    
 
 
 # In[53]:
 
 def send(text):
-    log("Send "+text)
-
+    print("*send "+text+"*")
+    
 def read(text):
-    log("Read new message")
-
+    print("*read")
+    
 def repeat(text):
-    log("repeat Last")
+    print("*repeat")
 
 
 # In[54]:
 
 def log(text):
-    print(text)
+    print('')
 
 
-# In[ ]:
-
-
-
-
-# In[55]:
+# In[57]:
 
 # 1. State: look for key word
-found,_=record_audio(state = 1)
+found,_ = record_audio(state = 1)
 
-print('***************************************')
+log('***************************************')
 # # 2. State: Recognized command
 if(found): command,value = record_audio(state = 2)
-print('command found '+command)
+log('command found '+command)
 
 # print('***************************************')
 
 # 3. State: execute command
-# state3(command,value)
+state3(command,value)
 
 
 # In[ ]:
@@ -188,3 +183,4 @@ print('command found '+command)
 # Once recieved trigger word, wait for command
 
 #
+
