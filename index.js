@@ -10,8 +10,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 var googleTTS = require('google-tts-api');
-var fs = require('fs');
-var player = require('play-sound')(opts = {});
+
+var fs = require('fs'),
+request = require('request');
+
+const spawn = require("child_process").spawn;
+const py = spawn('python', ['/Users/mahmed/Documents/GitHub/Accessbility-App/tts.py']);
+
+// var fs = require('fs');
+// var player = require('play-sound')(opts = {});
+// var play = require('play').Play();
 
 // googleTTS('Hello World', 'en', 1)   // speed normal = 1 (default), slow = 0.24
 // .then(function (url) {
@@ -67,9 +75,11 @@ app.use('/slack/events', slackEvents.expressMiddleware());
 // *** Greeting any user that says "hi" ***
 slackEvents.on('message', (message, body) => {
   // Only deal with messages that have no subtype (plain messages) and contain 'hi'
-  // console.log(body);
+  console.log(body);
 
-  if (!message.subtype && message.text.indexOf('hi') >= 0) {
+  if ((!message.subtype && message.text.indexOf('hi') >= 0) && message.user !== 'UBPPK0M5E') {
+    // console.log('current info: ');
+    // console.log(web.users.info);
     // Initialize a client
     // const slack = we;
     // // Handle initialization failure
@@ -85,29 +95,17 @@ slackEvents.on('message', (message, body) => {
 });
 
 slackEvents.on('message', (message, body) => {
+
+  // enter if message to check user. Should not send msg if user::mir
   if(!web) {
     return console.error('We could not handle your message.');
   }
 
-  var file = fs.createWriteStream("file.mp3");
-
-  googleTTS(message.text, 'en', 1)   // speed normal = 1 (default), slow = 0.24
-  .then(function (url) {
-
-  var request = http.get("http://i3.ytimg.com/vi/J---aiyznGQ/mqdefault.jpg", function(response) {
-  response.pipe(file); });
-
-  player.play('file.mp3', function(err) {
-    if (err) throw err
-  });
-
-    console.log(url); // https://translate.google.com/translate_tts?...
-  })
-  .catch(function (err) {
-    console.error(err.stack);
-  });
+  // play audio here
 
 });
+
+// end of play event func
 
 // *** Handle errors ***
 slackEvents.on('error', (error) => {

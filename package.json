@@ -23,8 +23,11 @@
     "body-parser": "^1.18.3",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
+    "google-tts": "^1.1.2",
     "google-tts-api": "0.0.2",
     "passport": "^0.4.0",
-    "play-sound": "^1.1.2"
+    "play": "^0.5.0",
+    "play-sound": "^1.1.2",
+    "request": "^2.87.0"
   }
 }
